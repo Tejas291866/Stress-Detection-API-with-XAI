@@ -70,13 +70,18 @@ class SWELLDataLoader:
         y_train_encoded = self.label_encoder.fit_transform(y_train_df)
         y_test_encoded = self.label_encoder.transform(y_test_df)
 
+        # --- FIX: Fit the scaler on the raw training data here ---
+        # This ensures the scaler is fitted when the API starts up,
+        # allowing it to preprocess incoming data for predictions.
+        self.scaler.fit(X_train_raw) 
+        # --- END FIX ---
+
         print(f"Data loaded. X_train_raw shape: {X_train_raw.shape}, y_train_encoded shape: {y_train_encoded.shape}")
         print(f"Number of original features: {len(self.feature_column_names)}")
         print(f"Classes: {self.label_encoder.classes_}")
 
         # Return X_train_raw and X_test_raw (unscaled) for consistent background data use in XAI
         # and also return the feature names
-        # FIX: Now explicitly return the original_feature_names
         return X_train_raw, X_test_raw, y_train_encoded, y_test_encoded, self.feature_column_names
 
     def preprocess(self, data: np.ndarray, fit: bool = False) -> np.ndarray:
@@ -145,7 +150,8 @@ if __name__ == "__main__":
     print(f"Label classes: {data_loader.label_encoder.classes_}")
 
     # Test preprocessing
-    X_train_scaled = data_loader.preprocess(X_train_raw, fit=True)
+    # The scaler is already fitted by load_data, so subsequent calls use fit=False
+    X_train_scaled = data_loader.preprocess(X_train_raw, fit=False) # Changed to fit=False
     X_test_scaled = data_loader.preprocess(X_test_raw, fit=False)
     print(f"X_train_scaled shape: {X_train_scaled.shape}")
     print(f"X_test_scaled shape: {X_test_scaled.shape}")
