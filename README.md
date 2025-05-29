@@ -17,30 +17,6 @@ Internet Connection: Required for initial package installation.
 🧠 System Architecture
 The system follows a client-server architecture, divided into a backend API and a frontend user interface. Data flows from the user input through the frontend to the backend for processing and then back to the frontend for display.
 
-+------------------+     HTTP Request/Response     +---------------------+
-|                  | <---------------------------->|                     |
-|   User Browser   |                               |   Streamlit Frontend|
-|   (Web UI)       |       1. User Input           |   (streamlit_app.py)|
-|                  |       2. Display Results      |                     |
-+------------------+                               +----------+----------+
-                                                              |
-                                           API Request (HRV Features)
-                                                              |
-                                                              v
-+-------------------------------------------------------------------------+
-|                        FastAPI Backend (api.py)                         |
-|                                                                         |
-|  +---------------------+   +---------------------+   +----------------+ |
-|  | Request Processing  |<->|  Data Preprocessing |<->| Model Inference| |
-|  |(Pydantic Validation)|   | (data_loader,       |   | (model.py)     | |
-|  +---------------------+   | feature_engineering)|   +----------------+ |
-|                            +---------------------+                      |
-|  +---------------------+   +---------------------+ +------------------+ |
-|  |     SHAP Explanation|<->|    Background Data  | |use trained model | |
-|  |   (xai_utils.py)    |   |   (from train.csv)  | |                  | |
-|  +---------------------+   +---------------------+ +------------------+ |
-|                                                                         |
-+-------------------------------------------------------------------------+
 Workflow Breakdown:
 
 User Interaction: A user interacts with the Streamlit Frontend via a web browser, inputting raw HRV features.
